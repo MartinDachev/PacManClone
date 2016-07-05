@@ -1,0 +1,4 @@
+c:\users\martin d\documents\visual studio 2012\Projects\PacMan\PacMan\PacManContent\obj\x86\Debug\PacManContent.contentprojResolveAssemblyReference.cache
+C:\Users\Martin\Desktop\PacMan\PacMan\PacManContent\obj\x86\Debug\PacManContent.contentprojResolveAssemblyReference.cache
+C:\Users\Martin D\Desktop\PacMan\PacMan\PacManContent\obj\x86\Debug\PacManContent.contentprojResolveAssemblyReference.cache
+C:\Users\marti\Desktop\pacman\PacMan\PacManContent\obj\x86\Debug\PacManContent.contentprojResolveAssemblyReference.cache
