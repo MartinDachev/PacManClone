@@ -29,6 +29,11 @@ namespace PacMan
             this.Enabled = false;
         }
 
+        public void Reset()
+        {
+            this.Time = 0.0;
+        }
+
         public bool Enabled { get; set; }
 
         public void Tick(double time)

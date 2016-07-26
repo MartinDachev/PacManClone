@@ -21,20 +21,24 @@ namespace PacMan
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        int level;
 
         GameState gameState = GameState.Menu;
         MovementMode ghostsMovementMode = MovementMode.Scatter;
         Texture2D[] tiles;
         Texture2D mapTexture;
         Texture2D pelletTexture;
+        Texture2D energizerTexture;
         SpriteFont font, fontSmall;
         public static Player player;
         Blinky blinky;
         KeyboardState kbState;
 
         GameTimer ghostsModeTimer;
+        GameTimer frightenedModeTimer;
         double[] scatterStart = new double[4];
         double[] chaseStart = new double[3];
+        double[] frightenedModeDuration;
         bool chasePermanently;
 
         public static Vector2 tileSize = new Vector2(18, 18);
@@ -49,7 +53,7 @@ namespace PacMan
             { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 },
             { 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2 },
             { 2, 1, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 1, 2 },
-            { 2, 1, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 1, 2 },
+            { 2, 4, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 4, 2 },
             { 2, 1, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 1, 2 },
             { 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2 },
             { 2, 1, 2, 2, 2, 2, 1, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 1, 2, 2, 2, 2, 1, 2 },
@@ -111,6 +115,7 @@ namespace PacMan
 
         protected override void LoadContent()
         {
+            level = 0;
             spriteBatch = new SpriteBatch(GraphicsDevice);
             tiles[0] = Content.Load<Texture2D>("zeroTile");
             tiles[1] = Content.Load<Texture2D>("foodTile");
@@ -121,6 +126,7 @@ namespace PacMan
             fontSmall = Content.Load<SpriteFont>("BroadwaySmall");
             mapTexture = Content.Load<Texture2D>("map");
             pelletTexture = Content.Load<Texture2D>("pellet");
+            energizerTexture = Content.Load<Texture2D>("energizer");
             player = new Player(Content.Load<Texture2D>("player"), new Vector2(tileSize.X, 4 * tileSize.Y - 62), "player");
             player.currentTile = new Tile(1, 4, new Vector2(1.5f * tileSize.X, 4.5f * tileSize.Y));
             player.currentTile.Set(1, 4);
@@ -133,7 +139,7 @@ namespace PacMan
             player.pacmanLeftTexture = Content.Load<Texture2D>("pacmanLeft");
             player.pacmanRightTexture = Content.Load<Texture2D>("pacmanRight");
             player.pacmanUpTexture = Content.Load<Texture2D>("pacmanUp");
-            blinky = new Blinky(Content.Load<Texture2D>("blinky"), new Vector2(11 * tileSize.X, 17 * tileSize.Y - 62), "enemy");
+            blinky = new Blinky(Content.Load<Texture2D>("blinky"), Content.Load<Texture2D>("frightenedghost"), new Vector2(11 * tileSize.X, 17 * tileSize.Y - 62), "enemy");
             blinky.currentTile = new Tile(11, 17, new Vector2(11.5f * tileSize.X, 17.5f * tileSize.Y));
             blinky.currentTile.Set(11, 17);
             blinkyScatterTile.Set(25, 0);
@@ -146,10 +152,15 @@ namespace PacMan
             blinky.ChangeVelocity(new Vector2(3f, 0f));
             blinky.UpdateCenter();
             //blinky.TargetingAI(player);
+
             ghostsModeTimer = new GameTimer();
             ghostsModeTimer.Start();
+            frightenedModeTimer = new GameTimer();
+            frightenedModeTimer.Start();
+
             scatterStart = new double[] { 0, 27000, 54000, 79000 };
             chaseStart = new double[] { 7000, 34000, 59000, 84000 };
+            frightenedModeDuration = new double[] { 6000, 5000, 4000, 3000, 2000, 5000, 2000, 2000, 1000, 5000, 2000, 1000, 1000, 3000, 1000, 1000 };
         }
 
         protected override void UnloadContent()
@@ -194,14 +205,31 @@ namespace PacMan
             blinky.TargetingAI(player);
         }
 
-        private void IncrementTimers(GameTime gameTime)
+        private void IncrementTimers(GameTime gameTime) 
         {
-            ghostsModeTimer.Tick(gameTime.ElapsedGameTime.Milliseconds);
+            if(!player.Energized)
+            {
+                ghostsModeTimer.Tick(gameTime.ElapsedGameTime.Milliseconds);
+            }
+            else
+            {
+                frightenedModeTimer.Tick(gameTime.ElapsedGameTime.Milliseconds);
+            }
+            
         }
         //bool changedToScatter = false;
         private void HandleGhostModesTimer()
         {
-            if(!chasePermanently && ghostsModeTimer.Enabled)
+            if (player.Energized)
+            {
+                SetGhostsMode(MovementMode.Frightened);
+                if(frightenedModeTimer.Time > frightenedModeDuration[level])
+                {
+                    frightenedModeTimer.Reset();
+                    player.Energized = false;
+                }
+            }
+            else if(!chasePermanently && ghostsModeTimer.Enabled)
             {
                 int length = Math.Min(scatterStart.Length, chaseStart.Length);
                 bool  changedToScatter = false;
@@ -217,7 +245,6 @@ namespace PacMan
 
                 if(!changedToScatter)
                 {
-                    //changedToScatter = true;
                     SetGhostsMode(MovementMode.Chase);
                 }
 
@@ -247,7 +274,13 @@ namespace PacMan
                 for (int j = 0; j < 28; j++)
                 {
                     if (map[i, j] == 1)
-                    spriteBatch.Draw(pelletTexture, pos + offset, Color.White);
+                    {
+                        spriteBatch.Draw(pelletTexture, pos + offset, Color.White);
+                    }
+                    if(map[i, j] == 4)
+                    {
+                        spriteBatch.Draw(energizerTexture, pos + offset + new Vector2(-2, -2), Color.White);
+                    }
                     pos.X += tileSize.X;
                 }
                 pos.X = 0;
@@ -265,10 +298,10 @@ namespace PacMan
                 }
             }*/
 
-            spriteBatch.Draw(blinky.texture, new Vector2(blinky.position.X - 4, blinky.position.Y), Color.White);
+            spriteBatch.Draw(blinky.Texture, new Vector2(blinky.position.X - 4, blinky.position.Y), Color.White);
             spriteBatch.Draw(player.GetTexture(), new Vector2(player.position.X - 4, player.position.Y), Color.White);
             //spriteBatch.DrawString(fontSmall, "Score: " + player.score, new Vector2(320, 560), Color.White);
-            spriteBatch.DrawString(fontSmall, "Score: " + blinky.movementMode.ToString(), new Vector2(320, 560), Color.White);
+            spriteBatch.DrawString(fontSmall, "Score: " + blinky.velocityReversePending + blinky.currentTile.X + " " + blinky.currentTile.Y, new Vector2(320, 560), Color.White);
             if (gameState == GameState.Menu || gameState == GameState.Paused)
             {
                 spriteBatch.DrawString(font, "Press Space to play!", new Vector2(90, 245), Color.White);

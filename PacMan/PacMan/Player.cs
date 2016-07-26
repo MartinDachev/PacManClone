@@ -10,8 +10,6 @@ namespace PacMan
 {
     public class Player : Character
     {
-        bool isCenteredX = true;
-        bool isCenteredY = true;
         Vector2 pressedDirections;
         public int score;
         public Texture2D pacmanDownTexture, pacmanLeftTexture, pacmanRightTexture, pacmanUpTexture;
@@ -19,6 +17,11 @@ namespace PacMan
         public Player(Texture2D texture, Vector2 position, string tag)
             : base(texture, position, tag)
         {
+        }
+
+        public bool Energized
+        {
+            get; set;
         }
 
         public Texture2D GetTexture()
@@ -162,6 +165,11 @@ namespace PacMan
             {
                 Game1.map[currentTile.Y, currentTile.X] = 0;
                 score += 10;
+            }
+            else if(Game1.map[currentTile.Y, currentTile.X] == 4)
+            {
+                Game1.map[currentTile.Y, currentTile.X] = 0;
+                this.Energized = true;
             }
 
             if (nextTile.X == currentTile.X && nextTile.Y == currentTile.Y)

@@ -89,3 +89,7 @@ C:\Users\marti\Desktop\pacman\PacMan\PacMan\obj\x86\Debug\PacMan.csprojResolveAs
 C:\Users\marti\Desktop\pacman\PacMan\PacMan\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
 C:\Users\marti\Desktop\pacman\PacMan\PacMan\obj\x86\Debug\PacMan.exe
 C:\Users\marti\Desktop\pacman\PacMan\PacMan\obj\x86\Debug\PacMan.pdb
+C:\Users\marti\Desktop\pacman\PacMan\PacMan\bin\x86\Debug\Content\frightenedGhost.xnb
+C:\Users\marti\Desktop\pacman\PacMan\PacMan\bin\x86\Debug\Content\energizer.xnb
+C:\Users\Martin\Desktop\pacman\PacMan\PacMan\bin\x86\Debug\Content\frightenedGhost.xnb
+C:\Users\Martin\Desktop\pacman\PacMan\PacMan\bin\x86\Debug\Content\energizer.xnb

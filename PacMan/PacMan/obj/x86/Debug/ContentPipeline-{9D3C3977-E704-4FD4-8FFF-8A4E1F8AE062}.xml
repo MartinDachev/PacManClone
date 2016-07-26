@@ -137,6 +137,24 @@
       <Time>2015-06-29T06:58:24+03:00</Time>
     </Item>
     <Item>
+      <Source>frightenedGhost.png</Source>
+      <Name>frightenedGhost</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Martin\Desktop\pacman\PacMan\PacMan\bin\x86\Debug\Content\frightenedGhost.xnb</Output>
+      <Time>2016-07-10T21:15:08+03:00</Time>
+    </Item>
+    <Item>
+      <Source>energizer.png</Source>
+      <Name>energizer</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Martin\Desktop\pacman\PacMan\PacMan\bin\x86\Debug\Content\energizer.xnb</Output>
+      <Time>2016-07-10T21:15:30+03:00</Time>
+    </Item>
+    <Item>
       <Source>Broadway.spritefont</Source>
       <Name>Broadway</Name>
       <Importer>FontDescriptionImporter</Importer>

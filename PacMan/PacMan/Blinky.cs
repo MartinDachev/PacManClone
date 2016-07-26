@@ -18,20 +18,36 @@ namespace PacMan
     {
 
         bool nextTileAvailable;
-        bool velocityReversePending;
+        public bool velocityReversePending;
         public MovementMode movementMode;
         public Tile scatterTargetTile;
+        private Texture2D frightenedTexture;
 
-        public Blinky(Texture2D texture, Vector2 position, string tag)
+        public Blinky(Texture2D texture, Texture2D frightenedTexture, Vector2 position, string tag)
             : base(texture, position, tag)
         {
+            this.frightenedTexture = frightenedTexture;
             UpdateCenter();
         }
+
+        public Texture2D Texture
+        {
+            get
+            {
+                if(movementMode == MovementMode.Frightened)
+                {
+                    return frightenedTexture;
+                }
+
+                return texture;
+            }
+        }
+
 
         public void SetMovementMode(MovementMode movementMode)
         {
             // If changing mode to Scatter from other
-            if(this.movementMode != movementMode && movementMode == MovementMode.Scatter)
+            if(this.movementMode != movementMode && (movementMode == MovementMode.Scatter || movementMode == MovementMode.Frightened))
             {
                 velocityReversePending = true;
             }
@@ -71,11 +87,15 @@ namespace PacMan
                 velocity = -velocity;
                 velocityReversePending = false;
             }
+            else
+            {
+                currentTile.Set(nextTile.X, nextTile.Y);
+            }
             
             
             float dist = float.MaxValue, distMin = float.MaxValue;
             Tile tempTile = new Tile();
-            currentTile.Set(nextTile.X, nextTile.Y);
+       
 
             if ((velocity.Y == 0 || velocity.Y > 0) &&
                 (Game1.IsTileAvailible(currentTile.X, currentTile.Y + 1) || Game1.IsTileTunnel(currentTile.X, currentTile.Y + 1)))
